@@ -42,6 +42,14 @@ This tool is designed for personal archiving and research. It respects robots.tx
 
 See IMPLEMENTATION_PLAN.md for architecture and roadmap details.
 
+## Contributing
+
+See CONTRIBUTING.md for setup and workflow. Please also review CODE_OF_CONDUCT.md and SECURITY.md.
+
+## License
+
+MIT — see LICENSE.
+
 ## Demo
 
 Run the included demo script to try common flows and produce sample outputs in `demo_outputs/`:

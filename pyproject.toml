@@ -33,6 +33,11 @@ dependencies = [
 browser = ["playwright>=1.44.0"]
 llm = ["openai>=1.37.0"]
 
+[project.urls]
+Homepage = "https://github.com/yourname/webtomd"
+Repository = "https://github.com/yourname/webtomd.git"
+Issues = "https://github.com/yourname/webtomd/issues"
+
 [project.scripts]
 webtomd = "webtomd.cli:entrypoint"
 
