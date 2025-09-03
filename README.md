@@ -4,7 +4,7 @@ Convert web pages to clean Markdown using a robust normalization pipeline, quali
 
 ## Quickstart
 
-- Prerequisites: Python 3.9+ and `uv` installed.
+- Prerequisites: Python 3.9+ and `uv` installed (see Install as CLI Tool below).
 - Everything installs locally into `.venv` via `uv sync` — no global/system packages required.
 
 Commands:
@@ -16,6 +16,26 @@ Commands:
 - Use Firecrawl: `uv run webtomd -p https://example.com -o article.md --use-firecrawl`
 - Build wheel/sdist: `uv build`
 - Install CLI locally: `uv tool install .`
+
+## Install as CLI Tool (requires uv)
+
+`uv tool install .` installs the `webtomd` command into an isolated environment and drops a small launcher into your user bin directory.
+
+- Install uv (if you don’t have it): follow https://docs.astral.sh/uv/ (e.g., the installer script shown there). Ensure `uv` is on your PATH.
+- Install the CLI from this repo:
+  - Default: `uv tool install .`
+  - With browser extra (Playwright): `uv tool install .[browser]`
+- Make sure the tool bin directory is on PATH so new shells can find `webtomd`:
+  - Common location: `~/.local/bin` (macOS/Linux)
+  - Bash/Zsh: add `export PATH="$HOME/.local/bin:$PATH"` to your shell rc
+  - Fish: `echo 'fish_add_path ~/.local/bin' >> ~/.config/fish/config.fish`
+- Verify in a new terminal: `webtomd --version`
+- Update after changes: rerun `uv tool install .`
+- Uninstall: `uv tool uninstall webtomd`
+
+Notes:
+- The installed tool runs in its own environment (separate from this repo’s `.venv`).
+- For the optional browser mode, you still need to provision Chromium once: `uvx playwright install --with-deps chromium`.
 
 Optional:
 
