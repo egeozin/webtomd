@@ -10,6 +10,13 @@ from webtomd.utils.url import slugify
 
 
 def main():
+    # Load .env if present so FIRECRAWL_API_KEY (and others) are available
+    try:
+        from dotenv import load_dotenv  # type: ignore
+
+        load_dotenv()
+    except Exception:
+        pass
     p = argparse.ArgumentParser(description="Demo runner for webtomd")
     p.add_argument("--url", action="append", help="URL to process (repeatable)")
     p.add_argument("--browser", action="store_true", help="Allow browser fallback")
@@ -51,4 +58,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

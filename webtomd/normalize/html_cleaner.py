@@ -55,6 +55,15 @@ DISCARD: Set[str] = {
 }
 
 
+def _sanitize_text(text: Optional[str]) -> Optional[str]:
+    if text is None:
+        return None
+    # Remove control characters (0x00-0x1F) except for tab (0x09), newline (0x0A), and carriage return (0x0D)
+    # and also remove the unicode replacement character (0xFFFD)
+    # See https://www.w3.org/TR/xml/#charsets for valid XML characters.
+    return "".join(ch for ch in text if ch.isprintable() or ch in ['\t', '\n', '\r'])
+
+
 def parse_html(html_text: str) -> html.HtmlElement:
     return html.fromstring(html_text)
 
@@ -98,6 +107,8 @@ def prune(root: html.HtmlElement, keep_images: bool = False) -> None:
             # unwrap unknown/neutral elements
             parent = el.getparent()
             if parent is not None and tag not in {"html", "body"}:
+                el.text = _sanitize_text(el.text)
+                el.tail = _sanitize_text(el.tail)
                 el.drop_tag()
 
 
@@ -135,14 +146,14 @@ def wrap_stray_text(root: html.HtmlElement) -> None:
         # Leading text
         if parent.text and parent.text.strip():
             p = html.Element("p")
-            p.text = parent.text
+            p.text = _sanitize_text(parent.text)
             parent.text = None
             parent.insert(0, p)
         # Tail text for each child
         for child in list(parent):
             if child.tail and child.tail.strip():
                 p = html.Element("p")
-                p.text = child.tail
+                p.text = _sanitize_text(child.tail)
                 child.tail = None
                 idx = parent.index(child)
                 parent.insert(idx + 1, p)
@@ -155,9 +166,9 @@ def collapse_whitespace(root: html.HtmlElement) -> None:
         if el.tag.lower() in {"pre", "code"}:
             continue
         if el.text:
-            el.text = " ".join(el.text.split())
+            el.text = _sanitize_text(" ".join(el.text.split()))
         if el.tail:
-            el.tail = " ".join(el.tail.split())
+            el.tail = _sanitize_text(" ".join(el.tail.split()))
 
 
 def normalize_headings(root: html.HtmlElement) -> None:

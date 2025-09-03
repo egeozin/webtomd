@@ -1,10 +1,96 @@
 # Demo artifacts
 demo_outputs/
 
-# Byte-compiled / cache
-__pycache__/
-*.py[cod]
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Virtual environments (uv keeps .venv in-project)
-.venv/
+# IDE - VSCode
+/.vscode
+.vscode/
+*.code-workspace
+.history/
+
+# IDE - JetBrains (PyCharm, IntelliJ, etc)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Python
+*.py[cod]
+__pycache__/
+*.so
+.Python
+env/
+*.env
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+*.python-version
+.env
+.venv
+venv/
+ENV/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Build and package files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Supabase
+.branches
+.temp
+.env
+# Don't ignore /server/supabase/migrations
+!server/supabase/migrations/*.sql
+!supabase/seed.sql
+
+# ngrok
+ngrok.yml
+
+
+
 

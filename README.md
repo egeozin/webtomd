@@ -52,7 +52,7 @@ MIT — see LICENSE.
 
 ## Demo
 
-Run the included demo script to try common flows and produce sample outputs in `demo_outputs/`:
+Run the included demo script to try common flows and produce sample outputs in `demo_outputs/` (the demo auto-loads `.env`):
 
 - Default pipeline only:
   - `uv run python scripts/demo_webtomd.py --url https://example.com/`
@@ -75,6 +75,7 @@ Outputs:
 ## Environment & API Keys
 
 - Copy `.env.example` to `.env` and fill as needed (the CLI auto-loads `.env`).
+- Do not commit `.env` or any real API keys; `.env` is ignored by default.
 - `OPENAI_API_KEY`: optional, enables LLM-based QA (`--llm-eval` or auto if present). Obtain an API key at https://platform.openai.com/ and be mindful of usage costs.
 - `WEBTOMD_LLM_MODEL`: optional, override model name used (default `gpt-4o-mini`).
 - `FIRECRAWL_API_KEY`: optional, used when running with `--use-firecrawl` (or as a fallback). Get a key from https://app.firecrawl.dev/; docs at https://docs.firecrawl.dev/.

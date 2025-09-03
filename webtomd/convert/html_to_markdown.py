@@ -7,51 +7,59 @@ from markdownify import MarkdownConverter
 
 class WebToMdConverter(MarkdownConverter):
     def _el_text(self, el) -> str:
-        from lxml.html import HtmlElement
-        if isinstance(el, HtmlElement):
-            text = el.text_content()
+        # Works for both BeautifulSoup Tag and lxml elements
+        get_text = getattr(el, "get_text", None)
+        if callable(get_text):
+            # Join with spaces and strip extra whitespace
+            text = " ".join(list(el.stripped_strings))
         else:
-            text = str(el.text or "")
+            # Fallbacks for other element types
+            text = getattr(el, "text", "") or ""
         return " ".join(text.split())
 
-    def convert_table(self, el, text, convert_as_inline):  # pipe tables
-        # Collect rows
+    def convert_table(self, el, text, parent_tags):  # pipe tables
+        # Build header from thead if present; otherwise fall back to first row
         rows = []
         header = []
-        thead = el.find(".//thead")
+
+        thead = el.find("thead")
         if thead is not None:
-            tr = thead.find(".//tr")
+            tr = thead.find("tr")
             if tr is not None:
-                header = [self._el_text(td) for td in tr.findall(".//th") or tr.findall(".//td")]
-        tbodies = el.findall(".//tbody")
-        if header and not tbodies:
-            # body rows may be direct tr children
-            pass
-        # Gather all tr in order, excluding thead if we already read header
+                header = [self._el_text(td) for td in tr.find_all(["th", "td"]) or []]
+
+        # Gather all body rows (all <tr> not under <thead>)
         trs = []
-        for child in el.iter():
-            if getattr(child, "tag", "").lower() == "tr":
-                trs.append(child)
-        # Build header if not set from thead: use first row
+        for tr in el.find_all("tr"):
+            # Skip header rows
+            if tr.find_parent("thead") is not None:
+                continue
+            trs.append(tr)
+
+        # If header missing, use the first row as header
         if not header and trs:
-            first = trs[0]
-            header = [self._el_text(td) for td in first.findall(".//th") or first.findall(".//td")]
-            trs = trs[1:]
-        # Body rows
+            first = trs.pop(0)
+            header = [self._el_text(td) for td in first.find_all(["th", "td"]) or []]
+
+        # Extract body cell values
         for tr in trs:
-            cells = tr.findall(".//td")
+            cells = tr.find_all("td")
             if not cells:
-                cells = tr.findall(".//th")
+                cells = tr.find_all("th")
             if not cells:
                 continue
             rows.append([self._el_text(td) for td in cells])
+
         if not header:
-            # Fallback to plain text conversion
-            return "\n" + self.convert(el, convert_as_inline=True) + "\n"
+            # Fallback to default behavior if we can't infer a header
+            return super().convert_table(el, text, parent_tags)
+
         n = len(header)
         sep = ["---"] * n
+
         def line(cells):
             return "| " + " | ".join(cells) + " |"
+
         parts = ["", line(header), line(sep)]
         for r in rows:
             if len(r) < n:
@@ -60,24 +68,30 @@ class WebToMdConverter(MarkdownConverter):
         parts.append("")
         return "\n".join(parts)
 
-    def convert_pre(self, el, text, convert_as_inline):  # code blocks
-        code_el = None
-        if len(el) == 1 and getattr(el[0], "tag", "").lower() == "code":
-            code_el = el[0]
-        code_text = (code_el.text or "") if code_el is not None else (el.text or "")
-        code_text = code_text.rstrip("\n")
+    def convert_pre(self, el, text, parent_tags):  # code blocks
+        # Try to detect language from a nested <code class="language-...">
         lang = None
+        code_el = None
+        # Prefer a direct child <code> when present
+        if getattr(el, "contents", None) and len(el.contents) == 1:
+            child = el.contents[0]
+            if getattr(child, "name", "").lower() == "code":
+                code_el = child
+        if code_el is None:
+            code_el = el.find("code")
         if code_el is not None:
-            cls = code_el.attrib.get("class", "")
-            for token in cls.split():
+            classes = code_el.get("class", []) or []
+            for token in classes:
                 if token.startswith("language-"):
                     lang = token.split("-", 1)[-1]
                     break
-        fence = "```"
-        head = f"{fence}{lang or ''}\n" if lang else f"{fence}\n"
-        return f"\n{head}{code_text}\n{fence}\n\n"
 
-    def convert_hr(self, el, text, convert_as_inline):
+        fence = "```"
+        body = (text or "").rstrip("\n")
+        head = f"{fence}{lang or ''}\n" if lang else f"{fence}\n"
+        return f"\n{head}{body}\n{fence}\n\n"
+
+    def convert_hr(self, el, text, parent_tags):
         return "\n---\n\n"
 
 
