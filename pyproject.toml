@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling>=1.21.1"]
+build-backend = "hatchling.build"
+
+[project]
+name = "webtomd"
+version = "0.1.0"
+description = "Convert web pages to clean Markdown with normalization, evaluation, and fallbacks."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name" }
+]
+keywords = ["markdown", "scrape", "normalize", "html", "cli"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "httpx[http2]>=0.27.0",
+  "lxml>=5.2.1",
+  "markdownify>=0.13.1",
+  "typer>=0.12.3",
+  "rich>=13.7.1",
+  "pydantic>=2.7.4",
+  "langdetect>=1.0.9",
+  "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+browser = ["playwright>=1.44.0"]
+llm = ["openai>=1.37.0"]
+
+[project.scripts]
+webtomd = "webtomd.cli:entrypoint"
+
+[tool.hatch.build.targets.wheel]
+packages = ["webtomd"]
+
+[tool.uv]
+# Keep local virtualenv in project for self-contained setup
+package = true
+compile-bytecode = false
+dev-dependencies = [
+  "pytest>=8.2.0",
+]

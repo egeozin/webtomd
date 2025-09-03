@@ -1,0 +1,10 @@
+# Demo artifacts
+demo_outputs/
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments (uv keeps .venv in-project)
+.venv/
+
