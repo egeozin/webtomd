@@ -1,6 +1,6 @@
 # webtomd
 
-Convert web pages to clean Markdown using a robust normalization pipeline, quality evaluation (heuristics + optional LLM), and fallbacks (Jina Reader v1, Firecrawl). Packaged and run with uv only.
+Convert web pages to clean markdown using a normalization pipeline, quality evaluation (heuristics + optional LLM), and fallbacks (Jina Reader v1, Firecrawl). Packaged and run with uv only.
 
 ## Quickstart
 
