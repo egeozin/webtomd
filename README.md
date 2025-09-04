@@ -140,3 +140,32 @@ LLM evaluation helps verify that generated Markdown matches the original HTML’
 
 Costs and limits:
 - LLM evaluation consumes tokens; monitor usage and rate limits in your OpenAI account.
+# webtomd
+
+Convert web pages to clean Markdown. Simple, fast, and works out‑of‑the‑box.
+
+## Install (with uv)
+
+- Requires: Python 3.9+ and `uv` (see https://docs.astral.sh/uv/)
+- Try without installing: `uv run webtomd --help`
+- Install the CLI: `uv tool install .`
+  - Browser fallback support: `uv tool install .[browser]`
+  - Ensure your user bin (often `~/.local/bin`) is on PATH
+
+## Use
+
+- Convert a page:
+  - Not installed: `uv run webtomd -p https://example.com -o article.md`
+  - Installed: `webtomd -p https://example.com -o article.md`
+- Optional providers:
+  - Jina Reader v1: `--use-jina`
+  - Firecrawl: `--use-firecrawl` (needs `FIRECRAWL_API_KEY`)
+- LLM quality check (optional): auto if `OPENAI_API_KEY` is set; disable with `--no-llm`
+
+## Notes
+
+- Respects robots.txt by default; override with `--ignore-robots` if needed.
+- `.env` support in your working directory: copy `.env.example` to `.env` (never commit secrets).
+- Optional keys: `OPENAI_API_KEY` (LLM evaluation), `FIRECRAWL_API_KEY` (Firecrawl).
+- Browser fallback: after installing with `.[browser]`, run once: `uvx playwright install --with-deps chromium`.
+- Output includes YAML front matter (URL, optional title) and tidy paragraph wrapping by default.
